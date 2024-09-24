@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "start": "node ./server/server.js"
+  },
+
   "dependencies": {
     "assemblyai": "^4.7.0",
     "express": "^4.21.0"
