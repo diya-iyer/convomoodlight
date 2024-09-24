@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "assemblyai": "^4.7.0"
+    "assemblyai": "^4.7.0",
+    "express": "^4.21.0"
   }
 }
