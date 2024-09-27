@@ -34,7 +34,7 @@ void draw() {
 // Function to send microphone data to the Node.js server
 void sendMicDataToServer(String micValue) {
   // Create a new HTTP POST request
-  PostRequest post = new PostRequest("http://localhost:3000/microphone");
+  PostRequest post = new PostRequest("http://localhost:3000/sentiment");
 
   // Set the appropriate header and JSON data for the POST request
   post.addHeader("Content-Type", "application/json");
