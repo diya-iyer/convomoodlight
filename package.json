@@ -2,9 +2,9 @@
   "scripts": {
     "start": "node ./server/server.js"
   },
-
   "dependencies": {
     "assemblyai": "^4.7.0",
+    "body-parser": "^1.20.3",
     "express": "^4.21.0"
   }
 }
