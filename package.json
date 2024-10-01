@@ -1,10 +1,17 @@
 {
   "scripts": {
-    "start": "node ./server/server.js"
+    "start": "node ./server/server.js", 
+    "start_audio": "node --env-file=.env ./auido_data/audio.js"
   },
   "dependencies": {
     "assemblyai": "^4.7.0",
+    "dotenv": "^16.4.5",
     "body-parser": "^1.20.3",
-    "express": "^4.21.0"
+    "express": "^4.21.0",
+    "fs": "^0.0.1-security",
+    "openai": "^4.66.1",
+    "speech-recorder": "^2.1.0",
+    "tmp": "^0.2.3",
+    "wavefile": "^11.0.0"
   }
 }
