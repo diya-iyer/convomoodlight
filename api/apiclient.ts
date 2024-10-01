@@ -5,9 +5,9 @@ const client = new AssemblyAI({
   apiKey: 'b022c0038afd47618c3547adaa1109f8',
 });
 
-const transcribeAndAnalyzeSentiment = async (audioFilePath: string, sessionId: string) => {
+const transcribeAndAnalyzeSentiment = async (audioFilePath: string) => {
   const audioData = fs.readFileSync(audioFilePath);
-
+  
   const params = {
     audio: audioData.toString('base64'), // Converting the audio file to base64 string
     sentiment_analysis: true,
@@ -17,34 +17,25 @@ const transcribeAndAnalyzeSentiment = async (audioFilePath: string, sessionId: s
     const transcript = await client.transcripts.transcribe(params);
 
     if (transcript.sentiment_analysis_results) {
-      const sentimentData = transcript.sentiment_analysis_results.map(result => ({
+      const results = transcript.sentiment_analysis_results.map((result: any) => ({
         text: result.text,
         sentiment: result.sentiment,
         confidence: result.confidence,
       }));
 
-      // Send sentiment analysis data to the server using fetch
-      const response = await fetch('http://localhost:3000/sentiment', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          sessionId,  // Passing session id
-          sentimentData, // Passing sentiment data to the server
-        }),
-      });
-
-      if (response.ok) {
-        console.log("Sentiment analysis sent to server.");
-      } else {
-        console.error("Failed to send sentiment analysis to server:", response.statusText);
-      }
+      return {
+        transcription: transcript.text, // The full transcription text
+        sentimentResults: results, // Array of sentiment analysis results with text, sentiment, and confidence
+      };
     } else {
-      console.log("No sentiment analysis results found.");
+      return {
+        transcription: transcript.text,
+        sentimentResults: [], // Empty array if no sentiment analysis results
+      };
     }
   } catch (error) {
-    console.error("Error in transcription or sending to server:", error);
+    console.error('Error in transcription:', error);
+    throw error; 
   }
 };
 
