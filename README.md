@@ -26,7 +26,7 @@ Install the dependencies:
 npm install
 ```
 
-Put your Assembly AI API key in the config file.
+Add your Assembly AI API key to the .env file.
 
 Start the server
 ```bash
@@ -38,3 +38,4 @@ Replace the server url in [the Processing file](/processing_http_request/process
 Start the Arduino and Processing sketches normally.
 
 ## Documentation
+Docs for the Node.js server endpoints can be found [here](/docs/server-docs.md)
