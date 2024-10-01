@@ -1,25 +1,32 @@
-import { AssemblyAI } from 'assemblyai'
+import { AssemblyAI } from 'assemblyai';
+import fs from 'fs';
+
 const client = new AssemblyAI({
-    apiKey: 'b022c0038afd47618c3547adaa1109f8' 
-  })
-  
-  // const audioFile = './local_file.mp3'
-  const audioFile =
-    'https://github.com/AssemblyAI-Community/audio-examples/raw/main/20230607_me_canadian_wildfires.mp3'
+  apiKey: 'b022c0038afd47618c3547adaa1109f8',
+});
+
+const transcribeAndAnalyzeSentiment = async (audioFilePath: string) => {
+  const audioData = fs.readFileSync(audioFilePath);
   
   const params = {
-    audio: audioFile,
-    sentiment_analysis: true
-  }
-  
-  const run = async () => {
-    const transcript = await client.transcripts.transcribe(params)
-  
-    for (const result of transcript.sentiment_analysis_results!) {
-      console.log(result.text)
-      console.log(result.sentiment)
-      console.log(result.confidence)
+    audio: audioData.toString('base64'), // Converting the audio file to base64 string
+    sentiment_analysis: true,
+  };
+
+  try {
+    const transcript = await client.transcripts.transcribe(params);
+    if (transcript.sentiment_analysis_results) {
+      for (const result of transcript.sentiment_analysis_results) {
+        console.log(result.text);
+        console.log(result.sentiment);
+        console.log(result.confidence);
+      }
+    } else {
+      console.log('No sentiment analysis results found.');
     }
+  } catch (error) {
+    console.error('Error in transcription:', error);
   }
-  
-  run()
+};
+
+export default transcribeAndAnalyzeSentiment;
