@@ -12,4 +12,4 @@ const doSentimentAnalysis = async (session, url) => {
   session.sentimentReady = true;
 };
 
-module.exports(doSentimentAnalysis);
+module.exports = {doSentimentAnalysis};
