@@ -1,15 +1,9 @@
 const fs = require("fs");
-const OpenAI = require("openai");
 const { SpeechRecorder } = require("speech-recorder");
 const wavefile = require("wavefile");
 const tmp = require('tmp');
-require('dotenv').config();
 
 const { WaveFile } = wavefile;
-
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-});
 
 const createTempFile = (postfix) => new Promise((resolve, reject) => {
   tmp.file(
@@ -46,25 +40,12 @@ const recordAudio = (duration = 5000) => new Promise((resolve, reject) => {
   }, duration);
 });
 
-const transcribeAudio = async (filePath) => {
-  const transcription = await openai.audio.transcriptions.create({
-    file: fs.createReadStream(filePath),
-    model: "whisper-1",
-    language: 'en',
-    response_format: 'verbose_json',
-  });
-
-  return transcription.text;
-};
-
 // Example usage
 const main = async () => {
   try {
     console.log("Recording for 5 seconds...");
     const audioFile = await recordAudio(5000);
-    console.log("Recording finished. Transcribing...");
-    const transcription = await transcribeAudio(audioFile);
-    console.log("Transcription:", transcription);
+    console.log("Recording finished.");
   } catch (error) {
     console.error("Error:", error);
   }
