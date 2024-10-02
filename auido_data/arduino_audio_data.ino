@@ -1,7 +1,6 @@
 const int redPin = 4;
 const int greenPin = 3;
 const int bluePin = 2;
-const int micPin = A0;
 
 void setup() {
   // Initialize the RGB LED pins as outputs
@@ -9,31 +8,30 @@ void setup() {
   pinMode(greenPin, OUTPUT);
   pinMode(bluePin, OUTPUT);
 
-  // Initialize the microphone pin as input
-  pinMode(micPin, INPUT);
-
-  // Start serial communication for debugging
+  // Start serial communication at 9600 baud rate
   Serial.begin(9600);
 }
 
 void loop() {
-  // Read the microphone sensor value
-  int micValue = analogRead(micPin);
+  // Check if there's incoming data from the serial port
+  if (Serial.available() > 0) {
+    // Read the incoming microphone value from the serial port
+    int micValue = Serial.parseInt();
 
-  // Print the microphone value to the serial monitor
-  Serial.println(micValue);
+    // Ensure the micValue is within the expected range (0 to 1023)
+    micValue = constrain(micValue, 0, 1023);
 
-  // Map the microphone value to an RGB LED color range
-  // Assume micValue ranges from 0 to 1023 and we map it to RGB values from 0 to 255
-  int redValue = map(micValue, 0, 1023, 0, 255);
-  int greenValue = map(micValue, 0, 1023, 255, 0); // Reverse for variety
-  int blueValue = map(micValue, 0, 1023, 128, 255); // Another variation
+    // Map the micValue to RGB LED values
+    int redValue = map(micValue, 0, 1023, 0, 255);
+    int greenValue = map(micValue, 0, 1023, 255, 0); 
+    int blueValue = map(micValue, 0, 1023, 128, 255); 
 
-  // Set the RGB LED colors based on micValue
-  analogWrite(redPin, redValue);
-  analogWrite(greenPin, greenValue);
-  analogWrite(bluePin, blueValue);
+    // Write the values to the RGB LED
+    analogWrite(redPin, redValue);
+    analogWrite(greenPin, greenValue);
+    analogWrite(bluePin, blueValue);
 
-  // Small delay to stabilize the readings
-  delay(100);
+    // Small delay to stabilize the color change
+    delay(100);
+  }
 }
