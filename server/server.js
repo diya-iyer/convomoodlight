@@ -30,7 +30,7 @@ app.post('/end', (req, res) => {
 });
 
 // get audio
-app.post('/audio', bodyParser.raw({ type: 'audio/mpeg' }), (req, res) => {
+app.post('/audio', bodyparser.raw({ type: 'audio/mpeg' }), (req, res) => {
   const { id } = req.query;
   console.log(id, req.query);
 
