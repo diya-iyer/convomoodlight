@@ -1,20 +1,29 @@
-import { AssemblyAI } from 'assemblyai';
-import fs from 'fs';
-
-const client = new AssemblyAI({
+const client = {
   apiKey: 'b022c0038afd47618c3547adaa1109f8',
-});
+  async transcribe(params: any) {
+    const response = await fetch('https://api.assemblyai.com/v2/transcript', {
+      method: 'POST',
+      headers: {
+        authorization: this.apiKey,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(params),
+    });
+    const transcript = await response.json();
+    return transcript;
+  },
+};
 
-const transcribeAndAnalyzeSentiment = async (audioFilePath: string) => {
-  const audioData = fs.readFileSync(audioFilePath);
-  
-  const params = {
-    audio: audioData.toString('base64'), // Converting the audio file to base64 string
-    sentiment_analysis: true,
-  };
-
+const transcribeAndAnalyzeSentiment = async (sessionId: string) => {
   try {
-    const transcript = await client.transcripts.transcribe(params);
+    const audioUrl = `http://localhost:3000/audio?id=${sessionId}`;
+
+    const params = {
+      audio_url: audioUrl, 
+      sentiment_analysis: true,
+    };
+
+    const transcript = await client.transcribe(params);
 
     if (transcript.sentiment_analysis_results) {
       const results = transcript.sentiment_analysis_results.map((result: any) => ({
@@ -35,9 +44,8 @@ const transcribeAndAnalyzeSentiment = async (audioFilePath: string) => {
     }
   } catch (error) {
     console.error('Error in transcription:', error);
-    throw error; 
+    throw error;
   }
 };
 
 export default transcribeAndAnalyzeSentiment;
-
