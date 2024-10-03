@@ -1,16 +1,10 @@
 const fs = require("fs");
 const { SpeechRecorder } = require("speech-recorder");
 const wavefile = require("wavefile");
-const tmp = require('tmp');
+const axios = require('axios');
+const FormData = require('form-data');  // Import form-data
 
 const { WaveFile } = wavefile;
-
-const createTempFile = (postfix) => new Promise((resolve, reject) => {
-  tmp.file(
-    { postfix: postfix.indexOf('.') === 0 ? postfix : `.${postfix}` }, 
-    (err, path) => err ? reject(err) : resolve(path)
-  );
-});
 
 const recordAudio = (duration = 5000) => new Promise((resolve, reject) => {
   const buffer = [];
@@ -31,12 +25,28 @@ const recordAudio = (duration = 5000) => new Promise((resolve, reject) => {
     recorder.stop();
     const wav = new WaveFile();
     wav.fromScratch(1, sampleRate, "16", buffer);
-    
-    // const tempFile = await createTempFile('wav');
-    // just make a file in this folder called recorded_audio.wav
-    fs.writeFileSync('recorded_audio.wav', wav.toBuffer());
-    // fs.writeFileSync(tempFile, wav.toBuffer());
-    resolve('recorded_audio.wav');
+
+    // Save the audio file to disk
+    const filePath = 'recorded_audio.wav';
+    fs.writeFileSync(filePath, wav.toBuffer());
+
+    // Create form-data to send the file
+    const formData = new FormData();
+    formData.append('file', fs.createReadStream(filePath));
+
+    try {
+      // Send the file to the server
+      const response = await axios.post('http://localhost:3000/sentiment', formData, {
+        headers: {
+          ...formData.getHeaders()  // Set the appropriate headers
+        }
+      });
+      console.log('File sent successfully:', response.data);
+      resolve(response.data);
+    } catch (error) {
+      console.error('Error sending file:', error);
+      reject(error);
+    }
   }, duration);
 });
 
@@ -44,7 +54,7 @@ const recordAudio = (duration = 5000) => new Promise((resolve, reject) => {
 const main = async () => {
   try {
     console.log("Recording for 5 seconds...");
-    const audioFile = await recordAudio(5000);
+    const result = await recordAudio(5000);
     console.log("Recording finished.");
   } catch (error) {
     console.error("Error:", error);
